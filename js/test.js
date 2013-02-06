@@ -18,6 +18,7 @@ Test.prototype = {
             document.dispatchEvent(evt);
         },false)
         img.addEventListener('error',function(e){
+            obj.result = -1;
             var evt = document.createEvent('Events')
             evt.initEvent('test.error',false,false);
             evt.targetObject = obj;
@@ -45,6 +46,7 @@ TestList.prototype = {
     },
     handleEvent:function(event){
         switch (event.type) {
+            case 'test.error':
             case 'test.finish':
                 this.progress ++;
                 if(this.progress < this.list.length){
@@ -57,14 +59,6 @@ TestList.prototype = {
                     document.removeEventListener('test.finish', this, false);
                     document.removeEventListener('test.error', this, false);
                 }
-                break;
-            case 'test.error':
-                var evt = document.createEvent('Events')
-                evt.initEvent('testlist.error',false,false);
-                evt.targetObject = this;
-                document.dispatchEvent(evt);
-                document.removeEventListener('test.finish', this, false);
-                document.removeEventListener('test.error', this, false);
                 break;
         }
     },
