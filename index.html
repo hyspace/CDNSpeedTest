@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>CDN 速度测试</title>
-<link rel="stylesheet" href="ratchet.min.css" media="all">
+<link rel="stylesheet" href="css/ratchet.min.css" media="all">
 <meta name="viewport" content="width=device-width, user-scalable=no">
-<script src="test.js"></script>
+<script src="js/test.js"></script>
 <style>
 body {
     position:static;
@@ -17,7 +17,6 @@ view{
 .disabled,
 .disabled:active{
     color: #ccc;
-    -webkit-user-select: none;
 }
 #form .input-row label{
     width: 20%;
@@ -51,8 +50,8 @@ view{
 }
 #result-stat{
     display: inline-block;
-    background: #666;
-    color: #fff;
+    background: #ee0;
+    color: #000;
     padding: 10px;
     border-radius: 5px;
 }
@@ -74,7 +73,7 @@ view{
             <label for="access_type3"><input id='access_type3' name='access_type' type="radio" checked="checked" value='wifi'>WIFI</label>
           </div>
         </div>
-        <div class="input-row">
+        <div class="input-row" id='id-operator'>
           <label>运营商</label>
           <div class="input">
             <label for="operator1"><input id='operator1' name='operator' type="radio" checked="checked" value='unicom'>联通</label>
@@ -83,7 +82,7 @@ view{
             <label for="operator4"><input id='operator4' name='operator' type="radio" value='other'>其他</label>
           </div>
         </div>
-        <div class="input-row">
+        <div class="input-row" id='id-velocity'>
           <label>带宽</label>
           <div class="input">
             <label for="velocity1"><input id='velocity1' name='velocity' type="radio" checked="checked" value='1m'>1M</label>
@@ -100,7 +99,7 @@ view{
         </div>
       </div>
     </form>
-    <a class="button-block" id='test-button'>测试</a>
+    <a class="button-positive button-block" id='test-button'>测试</a>
     </div>
 
     <div id='result'>
@@ -124,10 +123,14 @@ view{
         switch(access_type){
             case 'wifi':
                 testList = testList1;
+                document.querySelector('#id-operator').style.display='none';
+                document.querySelector('#id-velocity').style.display='block';
                 updateResultHTML();
                 break;
             default:
                 testList = testList2;
+                document.querySelector('#id-operator').style.display='block';
+                document.querySelector('#id-velocity').style.display='none';
                 updateResultHTML();
         }
     }
@@ -158,23 +161,35 @@ view{
             document.info.location.blur();
             return false;
         }
+        if(document.info.location.value){
+            document.info.location.blur();
+        }else{
+            document.info.location.focus();
+            return false;
+        }
         _testing =true;
+        window.ontouchstart = function(e){e.preventDefault();};
         resultStat.innerHTML = '测试中请勿滑动页面^_^'
         testButton.className = 'button-block disabled';
         testList.reset();
         updateResultHTML();
         testList.start();
-        document.info.location.blur();
         return false;
     }
 
     function submitData () {
         var data = {};
         data.access_type = getRadioValue('access_type');
-        data.operator = getRadioValue('operator');
-        data.velocity = getRadioValue('velocity');
+        switch(data.access_type){
+            case 'wifi':
+                data.velocity = getRadioValue('velocity');
+                break;
+            default:
+                data.operator = getRadioValue('operator');
+        }
         data.location = document.info.location.value;
         data.result = testList.result();
+
         console.log(JSON.stringify(data));
 
         var xhr = new XMLHttpRequest(); 
@@ -251,15 +266,17 @@ view{
     },false)
 
     document.addEventListener('testlist.finish',function(){
-        _testing =false;
-        testButton.className = 'button-block';
+        testButton.className = 'button-positive button-block';
         updateResultHTML();
         submitData();
+        window.ontouchstart = function(){};
+        _testing =false;
     },false)
 
     document.addEventListener('testlist.error',function(){
+        window.ontouchstart = function(){};
         _testing =false;
-        testButton.className = 'button-block';
+        testButton.className = 'button-positive button-block';
         updateResultHTML();
         resultStat.innerHTML = '有图片下载失败请重试TAT'
     },false)
@@ -267,7 +284,7 @@ view{
     testButton.addEventListener('click',go)
 
     
-    for (i=1;i<document.info.access_type.length;i++){
+    for (i=0;i<document.info.access_type.length;i++){
         document.info.access_type[i].addEventListener('click',function(){
             radioChange();
         },false);
