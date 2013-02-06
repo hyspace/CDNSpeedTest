@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>CDN 速度测试</title>
 <link rel="stylesheet" href="ratchet.min.css" media="all">
+<meta name="viewport" content="width=device-width, user-scalable=no">
 <script src="test.js"></script>
 <style>
-h2{
-    padding:10px 0;
-    font-size:20px;
+body {
+    position:static;
 }
 view{
     padding: 54px 10px 10px;
@@ -19,14 +19,25 @@ view{
     color: #ccc;
     -webkit-user-select: none;
 }
+#form .input-row label{
+    width: 20%;
+}
+#result .input-row label{
+    width: 45%;
+}
+#result .input-group input {
+    width: 35%; 
+}
 .input-row label + .input {
-float: right;
-width: 65%; 
-padding-left: 0;
-margin-bottom: 0;
-border-bottom: 0;
-line-height: 20px;
-padding: 10px 0;
+    line-height: 20px;
+    padding: 10px 0;
+}
+.input-row .input{
+    float: right;
+    width: 65%;
+    padding-left: 0;
+    margin-bottom: 0;
+    border-bottom: 0;
 }
 .input-row .input label{
     float: none;
@@ -53,8 +64,7 @@ padding: 10px 0;
   <h1 class="title">GREE CDN 测速表格</h1>
 </header>
     <div id='form'>
-    <h2>信息</h2>
-    <form name='info'>
+    <form name='info' onsubmit='return go();'>
       <div class="input-group">
         <div class="input-row">
           <label>接入方式</label>
@@ -94,7 +104,6 @@ padding: 10px 0;
     </div>
 
     <div id='result'>
-    <h2>结果</h2>
     <div class='result-wrap'><p id='result-stat'>请开始测试^O^</p></div>
     <form>
       <div class="input-group" id='results'>
@@ -142,6 +151,21 @@ padding: 10px 0;
             }
         }
         return undefined;
+    }
+
+    function go(){
+        if(_testing){
+            document.info.location.blur();
+            return false;
+        }
+        _testing =true;
+        resultStat.innerHTML = '测试中请稍等^_^'
+        testButton.className = 'button-block disabled';
+        testList.reset();
+        updateResultHTML();
+        testList.start();
+        document.info.location.blur();
+        return false;
     }
 
     function submitData () {
@@ -239,20 +263,8 @@ padding: 10px 0;
         updateResultHTML();
         resultStat.innerHTML = '有图片下载失败请重试TAT'
     },false)
-
-    document.info.addEventListener('submit',function(){
-
-    },false)
     
-    testButton.addEventListener('click',function(){
-        if(_testing)return;
-        _testing =true;
-        resultStat.innerHTML = '测试中请稍等^_^'
-        testButton.className = 'button-block disabled';
-        testList.reset();
-        updateResultHTML();
-        testList.start();
-    })
+    testButton.addEventListener('click',go)
 
     
     for (i=1;i<document.info.access_type.length;i++){
@@ -261,7 +273,7 @@ padding: 10px 0;
         },false);
     }
     radioChange();
-
+    window.scrollTo(0, 1);
 </script>
 </body>
 </html>
