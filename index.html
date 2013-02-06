@@ -222,6 +222,10 @@ padding: 10px 0;
     //testList.start();
     var _testing = false;
 
+    document.addEventListener('test.finish',function(){
+        updateResultHTML();
+    },false)
+
     document.addEventListener('testlist.finish',function(){
         _testing =false;
         testButton.className = 'button-block';
