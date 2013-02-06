@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CDN 速度测试</title>
+<link rel="stylesheet" href="ratchet.min.css" media="all">
+<script src="test.js"></script>
+<style>
+h2{
+    padding:10px 0;
+    font-size:20px;
+}
+view{
+    padding: 54px 10px 10px;
+    display: block;
+}
+.disabled,
+.disabled:active{
+    color: #ccc;
+    -webkit-user-select: none;
+}
+.input-row label + .input {
+float: right;
+width: 65%; 
+padding-left: 0;
+margin-bottom: 0;
+border-bottom: 0;
+line-height: 20px;
+padding: 10px 0;
+}
+.input-row .input label{
+    float: none;
+    padding:0;
+    padding-right:10px;
+    white-space: nowrap;
+}
+</style>
+</head>
+<body>
+<view id='form'>
+<header class="bar-title">
+  <h1 class="title">GREE CDN 测速表格</h1>
+</header>
+    <div id='form'>
+    <h2>信息</h2>
+    <form name='info'>
+      <div class="input-group">
+        <div class="input-row">
+          <label>接入方式</label>
+          <div class="input">
+            <label for="access_type1"><input id='access_type1' name='access_type' type="radio" value='2g'>2G</label>
+            <label for="access_type2"><input id='access_type2' name='access_type' type="radio" value='3g'>3G</label>
+            <label for="access_type3"><input id='access_type3' name='access_type' type="radio" checked="checked" value='wifi'>WIFI</label>
+          </div>
+        </div>
+        <div class="input-row">
+          <label>运营商</label>
+          <div class="input">
+            <label for="operator1"><input id='operator1' name='operator' type="radio" checked="checked" value='unicom'>联通</label>
+            <label for="operator2"><input id='operator2' name='operator' type="radio" value='cect'>电信</label>
+            <label for="operator3"><input id='operator3' name='operator' type="radio" value='cmcc'>移动</label>
+            <label for="operator4"><input id='operator4' name='operator' type="radio" value='other'>其他</label>
+          </div>
+        </div>
+        <div class="input-row">
+          <label>带宽</label>
+          <div class="input">
+            <label for="velocity1"><input id='velocity1' name='velocity' type="radio" checked="checked" value='1m'>1M</label>
+            <label for="velocity2"><input id='velocity2' name='velocity' type="radio" value='2m'>2M</label>
+            <label for="velocity3"><input id='velocity3' name='velocity' type="radio" value='4m'>4M</label>
+            <label for="velocity4"><input id='velocity4' name='velocity' type="radio" value='10m'>10M</label>
+            <label for="velocity5"><input id='velocity5' name='velocity' type="radio" value='20m'>20M</label>
+            <label for="velocity6"><input id='velocity6' name='velocity' type="radio" value='other'>其他</label>
+          </div>
+        </div>
+        <div class="input-row">
+          <label>接入地点</label>
+          <input name='location' type="text" value="" placeholder="例如：北京。乱填者斩">
+        </div>
+      </div>
+    </form>
+    <a class="button-block" id='test-button'>测试</a>
+    </div>
+
+    <div id='result'>
+    <h2>结果</h2>
+    <form>
+      <div class="input-group" id='results'>
+      </div>
+    </form>
+    <div id='result-stat'></div>
+    </div>
+</view>
+<script>
+    function Template(){
+        var html = '<div class="input-row"><label>{key}</label><input type="text" value="{value}" readonly="readonly" placeholder="-"></div>';
+        return function(key,value){
+            return html.replace('{key}', key).replace('{value}', value);
+        }
+    }
+
+    function radioChange(){
+        var access_type = getRadioValue('access_type');
+        switch(access_type){
+            case 'wifi':
+                testList = testList1;
+                updateResultHTML();
+                break;
+            default:
+                testList = testList2;
+                updateResultHTML();
+        }
+    }
+
+    function updateResultHTML(){
+        resultDom.innerHTML = ''
+        for(i=0;i<testList.list.length;i++){
+            resultDom.innerHTML += template(testList.list[i].key,testList.list[i].result ? testList.list[i].result : '-');
+        }
+    }
+
+    function getRadioValue(RadioName){
+        var obj;    
+        obj=document.getElementsByName(RadioName);
+        if(obj!=null){
+            var i;
+            for(i=0;i<obj.length;i++){
+                if(obj[i].checked){
+                    return obj[i].value;            
+                }
+            }
+        }
+        return undefined;
+    }
+
+    function submitData () {
+        var data = {};
+        data.access_type = getRadioValue('access_type');
+        data.operator = getRadioValue('operator');
+        data.velocity = getRadioValue('velocity');
+        data.location = document.info.location.value;
+        data.result = testList.result();
+        console.log(JSON.stringify(data));
+
+        // var xhr = new XMLHttpRequest(); 
+        // xhr.onreadystatechange = function(){
+        //     if(xhr.readyState == 4){
+        //         if(xhr.status == 200){
+        //             console.log('report sent. response:' + xhr.responseText);
+        //         }else{
+        //             console.log('report error:' + xhr.status);
+        //         }
+        //     }
+        // }
+        // xhr.open('POST',this.url,true);
+        // xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+        // xhr.send('data='+JSON.stringify(data));
+    }
+
+    var testList1 = new TestList();
+    testList1.list.push(
+        new Test('cncache10k','http://gree.ccgslb.net/cdntest/10KB.jpg'),
+        new Test('cncache50k','http://gree.ccgslb.net/cdntest/50KB.jpg'),
+        new Test('cncache300k','http://gree.ccgslb.net/cdntest/300KB.jpg'),
+        new Test('cncache2m','http://gree.ccgslb.net/cdntest/2MB.jpg'),
+        new Test('cnc10k','http://www.jyrh.com.wscdns.com/cdntest/10KB.jpg'),
+        new Test('cnc50k','http://www.jyrh.com.wscdns.com/cdntest/50KB.jpg'),
+        new Test('cnc300k','http://www.jyrh.com.wscdns.com/cdntest/300KB.jpg'),
+        new Test('cnc2m','http://www.jyrh.com.wscdns.com/cdntest/2MB.jpg'),
+        new Test('upaiyun10k','http://cdntest.b0.upaiyun.com/10KB.jpg'),
+        new Test('upaiyun50k','http://cdntest.b0.upaiyun.com/50KB.jpg'),
+        new Test('upaiyun300k','http://cdntest.b0.upaiyun.com/300KB.jpg'),
+        new Test('lysj10k','http://gree.jp.go2matrix.net/cdntest/10KB.jpg'),
+        new Test('lysj50k','http://gree.jp.go2matrix.net/cdntest/50KB.jpg'),
+        new Test('lysj300k','http://gree.jp.go2matrix.net/cdntest/300KB.jpg'),
+        new Test('lysj2m','http://gree.jp.go2matrix.net/cdntest/2M.jpg')
+        );
+
+
+
+
+    var testList2 = new TestList();
+    testList2.list.push(
+        new Test('cncache10k','http://gree.ccgslb.net/cdntest/10KB.jpg'),
+        new Test('cncache50k','http://gree.ccgslb.net/cdntest/50KB.jpg'),
+        //new Test('cncache300k','http://gree.ccgslb.net/cdntest/300KB.jpg'),
+        //new Test('cncache2m','http://gree.ccgslb.net/cdntest/2MB.jpg'),
+        new Test('cnc10k','http://www.jyrh.com.wscdns.com/cdntest/10KB.jpg'),
+        new Test('cnc50k','http://www.jyrh.com.wscdns.com/cdntest/50KB.jpg'),
+        //new Test('cnc300k','http://www.jyrh.com.wscdns.com/cdntest/300KB.jpg'),
+        //new Test('cnc2m','http://www.jyrh.com.wscdns.com/cdntest/2MB.jpg'),
+        new Test('upaiyun10k','http://cdntest.b0.upaiyun.com/10KB.jpg'),
+        new Test('upaiyun50k','http://cdntest.b0.upaiyun.com/50KB.jpg'),
+        //new Test('upaiyun300k','http://cdntest.b0.upaiyun.com/300KB.jpg'),
+        new Test('lysj10k','http://gree.jp.go2matrix.net/cdntest/10KB.jpg'),
+        new Test('lysj50k','http://gree.jp.go2matrix.net/cdntest/50KB.jpg')
+        //new Test('lysj300k','http://gree.jp.go2matrix.net/cdntest/300KB.jpg'),
+        //new Test('lysj2m','http://gree.jp.go2matrix.net/cdntest/2M.jpg')
+        );
+
+    var testList;
+
+    var resultDom = document.querySelector('#results');
+    var template = Template();
+    var i;
+    var testButton=document.querySelector('#test-button');
+    var resultStat=document.querySelector('#result-stat');
+    
+    //testList.start();
+    var _testing = false;
+
+    document.addEventListener('testlist.finish',function(){
+        _testing =false;
+        testButton.className = 'button-block';
+        updateResultHTML();
+        submitData();
+        resultStat.innerHTML = '测试完毕^O^'
+    },false)
+
+    document.addEventListener('testlist.error',function(){
+        _testing =false;
+        testButton.className = 'button-block';
+        updateResultHTML();
+        resultStat.innerHTML = '出错请重试TAT'
+    },false)
+    
+    testButton.addEventListener('click',function(){
+        if(_testing)return;
+        _testing =true;
+        resultStat.innerHTML = '测试中请稍等^_^'
+        testButton.className = 'button-block disabled';
+        testList.reset();
+        testList.start();
+    })
+
+    
+    for (i=1;i<document.info.access_type.length;i++){
+        document.info.access_type[i].addEventListener('click',function(){
+            radioChange();
+        },false);
+    }
+    radioChange();
+
+</script>
+</body>
+</html>
