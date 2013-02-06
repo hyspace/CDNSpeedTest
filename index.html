@@ -34,6 +34,17 @@ padding: 10px 0;
     padding-right:10px;
     white-space: nowrap;
 }
+.result-wrap{
+    margin-bottom: 10px;
+    text-align: center;
+}
+#result-stat{
+    display: inline-block;
+    background: #666;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
 </style>
 </head>
 <body>
@@ -84,11 +95,11 @@ padding: 10px 0;
 
     <div id='result'>
     <h2>结果</h2>
+    <div class='result-wrap'><p id='result-stat'>请开始测试^O^</p></div>
     <form>
       <div class="input-group" id='results'>
       </div>
     </form>
-    <div id='result-stat'></div>
     </div>
 </view>
 <script>
@@ -142,19 +153,21 @@ padding: 10px 0;
         data.result = testList.result();
         console.log(JSON.stringify(data));
 
-        // var xhr = new XMLHttpRequest(); 
-        // xhr.onreadystatechange = function(){
-        //     if(xhr.readyState == 4){
-        //         if(xhr.status == 200){
-        //             console.log('report sent. response:' + xhr.responseText);
-        //         }else{
-        //             console.log('report error:' + xhr.status);
-        //         }
-        //     }
-        // }
-        // xhr.open('POST',this.url,true);
-        // xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded")
-        // xhr.send('data='+JSON.stringify(data));
+        var xhr = new XMLHttpRequest(); 
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4){
+                if(xhr.status == 200){
+                    console.log('report sent. response:' + xhr.responseText);
+                    resultStat.innerHTML = '测试完毕，结果发送成功^O^欢迎多测几次~'
+                }else{
+                    console.log('report error:' + xhr.status);
+                    resultStat.innerHTML = '测试结果发送失败请重试TAT'
+                }
+            }
+        }
+        xhr.open('POST','/result',true);
+        xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+        xhr.send('data='+JSON.stringify(data));
     }
 
     var testList1 = new TestList();
@@ -214,14 +227,13 @@ padding: 10px 0;
         testButton.className = 'button-block';
         updateResultHTML();
         submitData();
-        resultStat.innerHTML = '测试完毕^O^'
     },false)
 
     document.addEventListener('testlist.error',function(){
         _testing =false;
         testButton.className = 'button-block';
         updateResultHTML();
-        resultStat.innerHTML = '出错请重试TAT'
+        resultStat.innerHTML = '有图片下载失败请重试TAT'
     },false)
 
     document.info.addEventListener('submit',function(){
