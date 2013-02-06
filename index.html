@@ -173,7 +173,7 @@ padding: 10px 0;
         new Test('lysj10k','http://gree.jp.go2matrix.net/cdntest/10KB.jpg'),
         new Test('lysj50k','http://gree.jp.go2matrix.net/cdntest/50KB.jpg'),
         new Test('lysj300k','http://gree.jp.go2matrix.net/cdntest/300KB.jpg'),
-        new Test('lysj2m','http://gree.jp.go2matrix.net/cdntest/2M.jpg')
+        new Test('lysj2m','http://gree.jp.go2matrix.net/cdntest/2MB.jpg')
         );
 
 
@@ -222,6 +222,10 @@ padding: 10px 0;
         testButton.className = 'button-block';
         updateResultHTML();
         resultStat.innerHTML = '出错请重试TAT'
+    },false)
+
+    document.info.addEventListener('submit',function(){
+
     },false)
     
     testButton.addEventListener('click',function(){

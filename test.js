@@ -54,6 +54,8 @@ TestList.prototype = {
                     evt.initEvent('testlist.finish',false,false);
                     evt.targetObject = this;
                     document.dispatchEvent(evt);
+                    document.removeEventListener('test.finish', this, false);
+                    document.removeEventListener('test.error', this, false);
                 }
                 break;
             case 'test.error':
@@ -61,6 +63,8 @@ TestList.prototype = {
                 evt.initEvent('testlist.error',false,false);
                 evt.targetObject = this;
                 document.dispatchEvent(evt);
+                document.removeEventListener('test.finish', this, false);
+                document.removeEventListener('test.error', this, false);
                 break;
         }
     },
@@ -76,8 +80,6 @@ TestList.prototype = {
     },
     reset:function(){
         this.progress = -1;
-        document.removeEventListener('test.finish', this, false);
-        document.removeEventListener('test.error', this, false);
         for(i=0;i<this.list.length;i++){
             this.list[i].reset();
         }
