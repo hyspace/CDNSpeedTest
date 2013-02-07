@@ -1,25 +1,25 @@
-CDN Speed Test
+#CDN Speed Test Lib
 
-js CDN 速度测试框架
+CDN Speed Test Lib is a js lib for image downloading speed test.
 
-usage:
+##usage:
 
-test:
+###test:
 
-    var test = new Test(key,url);
+    var test = new CDNSpeedTest.Test(key,url);
     document.addEventListener('test.finish',function(e){
-        console.log(e.targetObject.result);
+        console.log(e.targetObject.result());
     },false)
     test.run();
 
-test list;
+###test list;
 
-    var test = new Test(key,url);
-    var testlist = new TestList();
-    testlist.list.push(test);
+    var test = new CDNSpeedTest.Test(key,url);
+    var testlist = new CDNSpeedTest.TestList();
+    testlist.add(test);
 
     document.addEventListener('testlist.finish',function(e){
-        console.log(e.targetObject.list);
+        console.log(e.targetObject.result());
     },false)
 
     testlist.start();

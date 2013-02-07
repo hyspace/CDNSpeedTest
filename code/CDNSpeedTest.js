@@ -1,12 +1,18 @@
-~function(window){
+(function(window){
+    var _s;
+    //namespace
     window.CDNSpeedTest = {};
+
     CDNSpeedTest.Test =function(key,url){
         this.url = url;
         this.key = key;
         this.result = 0;
+
+        //if this test is belong to a TestList , this refer to the TestList Obj
+        this.ownerList = null;
     }
     CDNSpeedTest.Test.prototype = {
-        constructor:Test,
+        constructor:CDNSpeedTest.Test,
         run:function(){
             var obj = this;
             var startTime;
@@ -38,7 +44,7 @@
         this.progress = -1;
     }
     CDNSpeedTest.TestList.prototype = {
-        constructor:TestList,
+        constructor:CDNSpeedTest.TestList,
         result:function(){
             var obj = {};
             for(i=0;i<this.list.length;i++){
@@ -61,11 +67,17 @@
                         document.removeEventListener('test.finish', this, false);
                         document.removeEventListener('test.error', this, false);
                     }
-                    break;
             }
         },
         _step:function(){
             this.list[this.progress].run();
+        },
+        add:function(){
+            var i;
+            for(i=0;i<arguments.length;i++){
+                this.list.push(arguments[i]);
+                arguments[i].ownerList = this;
+            }
         },
         start:function(){
             if(!this.list.length)return;
@@ -81,4 +93,4 @@
             }
         }
     }
-}
+})(window);
