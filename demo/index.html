@@ -1,141 +1,109 @@
-
 <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>CDN 速度测试</title>
-<link rel="stylesheet" href="ratchet/ratchet.min.css" media="all">
-<meta name="viewport" content="width=device-width, user-scalable=no">
-<script src="../code/CDNSpeedTest.js"></script>
-<style>
-body {
-    position:static;
-}
-view{
-    padding: 54px 10px 10px;
-    display: block;
-}
-.disabled,
-.disabled:active{
-    color: #ccc;
-}
-#form .input-row label{
-    width: 20%;
-}
-#result .input-row label{
-    width: 45%;
-}
-#result .input-group input {
-    width: 35%; 
-}
-.input-row label + .input {
-    line-height: 20px;
-    padding: 10px 0;
-}
-.input-row .input{
-    float: right;
-    width: 65%;
-    padding-left: 0;
-    margin-bottom: 0;
-    border-bottom: 0;
-}
-.input-row .input label{
-    float: none;
-    padding:0;
-    padding-right:10px;
-    white-space: nowrap;
-}
-.result-wrap{
-    margin-bottom: 10px;
-    text-align: center;
-}
-#result-stat{
-    display: inline-block;
-    background: #ee0;
-    color: #000;
-    padding: 10px;
-    border-radius: 5px;
-}
-</style>
-</head>
-<body>
-<view id='form'>
-<header class="bar-title">
-  <h1 class="title">CDN Speed Test</h1>
-</header>
-    <div id='result'>
-    <form>
-      <div class="input-group" id='results'>
-      </div>
-    </form>
-    <a class="button-positive button-block" id='test-button'>start</a>
-    </div>
-</view>
-<script>
-    function Template(){
-        var html = '<div class="input-row"><label>{key}</label><input type="text" value="{value}" readonly="readonly" placeholder="-"></div>';
-        return function(key,value){
-            return html.replace('{key}', key).replace('{value}', value);
-        }
-    }
-
-    function updateResultHTML(result){
-        //console.log(testList);
-        resultDom.innerHTML = ''
-        for(key in result){
-            resultDom.innerHTML += template(key,result[key] ? result[key] : '-');
-        }
-    }
-
-    function go(){
-        if(_testing){
-            return;
-        }
-        _testing =true;
-        window.ontouchstart = function(e){e.preventDefault();};
-        testButton.className = 'button-block disabled';
-        testList.reset();
-        updateResultHTML(testList.result());
-        testList.start();
-    }
-
-    var testList = new CDNSpeedTest.TestList();
-    testList.add(
-        new CDNSpeedTest.Test('weibo-icon-64KB','http://img1.t.sinajs.cn/t5/style/images/common/icon.png'),
-        new CDNSpeedTest.Test('weibo-logo-7KB','http://img1.t.sinajs.cn/t5/style/images/global_nav/WB_logo.png')
-        );
-
-    var resultDom = document.querySelector('#results');
-    var template = Template();
-    var i;
-    var testButton=document.querySelector('#test-button');
-    var _testing = false;
-
-    document.addEventListener('test.finish',function(e){
-        updateResultHTML(e.targetObject.ownerList.result());
-    },false)
-
-    document.addEventListener('testlist.finish',function(e){
-        testButton.className = 'button-positive button-block';
-        var a = e.targetObject.result();
-        updateResultHTML(a);
-        window.ontouchstart = function(){};
-        _testing =false;
-    },false)
-
-    document.addEventListener('testlist.error',function(){
-        testButton.className = 'button-positive button-block';
-        var a = e.targetObject.result();
-        updateResultHTML(a);
-        window.ontouchstart = function(){};
-        _testing =false;
-    },false)
+<html>
     
-    testButton.addEventListener('click',go);
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            CDN Speed Test
+        </title>
+        <link rel="stylesheet" href="ratchet/ratchet.min.css" media="all">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <script src="../code/CDNSpeedTest.js">
+        </script>
+        <style>
+            body { position:static; } view{ padding: 54px 10px 10px; display: block;
+            } .disabled, .disabled:active{ color: #ccc; } #form .input-row label{ width:
+            20%; } #result .input-row label{ width: 45%; } #result .input-group input
+            { width: 35%; } .input-row label + .input { line-height: 20px; padding:
+            10px 0; } .input-row .input{ float: right; width: 65%; padding-left: 0;
+            margin-bottom: 0; border-bottom: 0; } .input-row .input label{ float: none;
+            padding:0; padding-right:10px; white-space: nowrap; } .result-wrap{ margin-bottom:
+            10px; text-align: center; } #result-stat{ display: inline-block; background:
+            #ee0; color: #000; padding: 10px; border-radius: 5px; }
+        </style>
+    </head>
+    
+    <body>
+        <view id='form'>
+            <header class="bar-title">
+                <h1 class="title">
+                    CDN Speed Test
+                </h1>
+            </header>
+            <div id='result'>
+                <form>
+                    <div class="input-group" id='results'>
+                    </div>
+                </form>
+                <a class="button-positive button-block" id='test-button'>start</a>
+            </div>
+        </view>
+        <script>
+function Template() {
+    var html = '<div class="input-row"><label>{key}</label><input type="text" value="{value}" readonly="readonly" placeholder="-"></div>';
+    return function(key, value) {
+        return html.replace('{key}', key).replace('{value}', value);
+    }
+}
 
+function updateResultHTML(result) {
+    //console.log(testList);
+    resultDom.innerHTML = ''
+    for (key in result) {
+        resultDom.innerHTML += template(key, result[key] ? result[key] : '-');
+    }
+}
+
+function go() {
+    if (_testing) {
+        return;
+    }
+    _testing = true;
+    window.ontouchstart = function(e) {
+        e.preventDefault();
+    };
+    testButton.className = 'button-block disabled';
+    testList.reset();
     updateResultHTML(testList.result());
+    testList.start();
+}
 
-    window.scrollTo(0, 1);
-</script>
-</body>
+var testList = new CDNSpeedTest.TestList();
+testList.add(
+new CDNSpeedTest.Test('weibo-icon-64KB', 'http://img1.t.sinajs.cn/t5/style/images/common/icon.png'), new CDNSpeedTest.Test('weibo-logo-7KB', 'http://img1.t.sinajs.cn/t5/style/images/global_nav/WB_logo.png'));
+
+var resultDom = document.querySelector('#results');
+var template = Template();
+var i;
+var testButton = document.querySelector('#test-button');
+var _testing = false;
+
+document.addEventListener('test.finish', function(e) {
+    updateResultHTML(e.targetObject.ownerList.result());
+}, false)
+
+document.addEventListener('testlist.finish', function(e) {
+    testButton.className = 'button-positive button-block';
+    var a = e.targetObject.result();
+    updateResultHTML(a);
+    window.ontouchstart = function() {};
+    _testing = false;
+}, false)
+
+document.addEventListener('testlist.error', function() {
+    testButton.className = 'button-positive button-block';
+    var a = e.targetObject.result();
+    updateResultHTML(a);
+    window.ontouchstart = function() {};
+    _testing = false;
+}, false)
+
+testButton.addEventListener('click', go);
+
+updateResultHTML(testList.result());
+
+window.scrollTo(0, 1);
+        </script>
+    </body>
+
 </html>
