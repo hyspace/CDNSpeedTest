@@ -1,5 +1,4 @@
 (function(window){
-    var _s;
     //namespace
     window.CDNSpeedTest = {};
 
