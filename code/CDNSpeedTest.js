@@ -48,6 +48,9 @@
     CDNSpeedTest.TestList = function(){
         this.list = [];
         this.progress = -1;
+        for(i=0;i<arguments.length;i++){
+            this.add(arguments[i]);
+        }
     }
     CDNSpeedTest.TestList.prototype = {
         constructor:CDNSpeedTest.TestList,
