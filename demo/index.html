@@ -70,7 +70,9 @@ function go() {
 
 var testList = new CDNSpeedTest.TestList();
 testList.add(
-new CDNSpeedTest.Test('weibo-icon-64KB', 'http://img1.t.sinajs.cn/t5/style/images/common/icon.png'), new CDNSpeedTest.Test('weibo-logo-7KB', 'http://img1.t.sinajs.cn/t5/style/images/global_nav/WB_logo.png'));
+new CDNSpeedTest.Test('weibo-icon-64KB', 'http://img1.t.sinajs.cn/t5/style/images/common/icon.png'),
+new CDNSpeedTest.Test('weibo-logo-7KB', 'http://img1.t.sinajs.cn/t5/style/images/global_nav/WB_logo.png')
+);
 
 var resultDom = document.querySelector('#results');
 var template = Template();
