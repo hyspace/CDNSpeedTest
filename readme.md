@@ -8,7 +8,7 @@ CDN Speed Test Lib is a js lib for image downloading speed test.
 
     var test = new CDNSpeedTest.Test(key,url);
     document.addEventListener('test.finish',function(e){
-        console.log(e.targetObject.result());
+        console.log(e.targetObject.result);
     },false)
     test.run();
 
