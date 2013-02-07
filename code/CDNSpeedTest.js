@@ -3,30 +3,36 @@
     //namespace
     window.CDNSpeedTest = {};
 
-    CDNSpeedTest.Test =function(key,url){
+    CDNSpeedTest.Test = function(key,url){
         this.url = url;
         this.key = key;
-        this.result = 0;
-
+        this._result = 0;
         //if this test is belong to a TestList , this refer to the TestList Obj
         this.ownerList = null;
     }
     CDNSpeedTest.Test.prototype = {
         constructor:CDNSpeedTest.Test,
+        result:function(){
+            return {
+                key:this.key,
+                url:this.url,
+                time:this._result
+            }
+        },
         run:function(){
             var obj = this;
             var startTime;
             var img = new Image();
             img.addEventListener('load',function(e){
                 var endTime = (new Date()).getTime();
-                obj.result = endTime - startTime;
+                obj._result = endTime - startTime;
                 var evt = document.createEvent('Events');
                 evt.initEvent('test.finish',false,false);
                 evt.targetObject = obj;
                 document.dispatchEvent(evt);
             },false)
             img.addEventListener('error',function(e){
-                obj.result = -1;
+                obj._result = -1;
                 var evt = document.createEvent('Events')
                 evt.initEvent('test.error',false,false);
                 evt.targetObject = obj;
@@ -36,7 +42,7 @@
             img.src = this.url + '?t=' + startTime;
         },
         reset:function(){
-            this.result = 0;
+            this._result = 0;
         }
     }
     CDNSpeedTest.TestList = function(){
@@ -46,11 +52,11 @@
     CDNSpeedTest.TestList.prototype = {
         constructor:CDNSpeedTest.TestList,
         result:function(){
-            var obj = {};
+            var arr = [],i;
             for(i=0;i<this.list.length;i++){
-                obj[this.list[i].key] = this.list[i].result;
+                arr.push(this.list[i].result());
             }
-            return obj;
+            return arr;
         },
         handleEvent:function(event){
             switch (event.type) {
@@ -79,7 +85,7 @@
                 arguments[i].ownerList = this;
             }
         },
-        start:function(){
+        run:function(){
             if(!this.list.length)return;
             if(this.progress!=-1)return;
             this.progress = 0;

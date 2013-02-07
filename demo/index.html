@@ -49,8 +49,9 @@ function Template() {
 function updateResultHTML(result) {
     //console.log(testList);
     resultDom.innerHTML = ''
-    for (key in result) {
-        resultDom.innerHTML += template(key, result[key] ? result[key] : '-');
+    var i;
+    for (i=0;i< result.length;i++) {
+        resultDom.innerHTML += template(result[i].key, result[i].time ? result[i].time : '-');
     }
 }
 
@@ -65,7 +66,7 @@ function go() {
     testButton.className = 'button-block disabled';
     testList.reset();
     updateResultHTML(testList.result());
-    testList.start();
+    testList.run();
 }
 
 var testList = new CDNSpeedTest.TestList();
