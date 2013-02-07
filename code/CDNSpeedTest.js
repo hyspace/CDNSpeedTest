@@ -81,6 +81,7 @@
         },
         start:function(){
             if(!this.list.length)return;
+            if(this.progress!=-1)return;
             this.progress = 0;
             document.addEventListener('test.finish', this, false);
             document.addEventListener('test.error', this, false);
